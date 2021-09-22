@@ -1,4 +1,4 @@
-# skymap_python
+# skymap_python CLI
 
 ### example
 
