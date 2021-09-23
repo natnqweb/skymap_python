@@ -1,9 +1,6 @@
 import sys
 import math
 
-commands = ["-help", "-h", "calculate-all", "calculate-j2000", "calculate-ha"]
-help_flag = False
-
 
 class SkyMap:
     hour = 0
@@ -205,9 +202,19 @@ class modes:
 
 def checkinput():
     current_mode = 0
-    if(sys.argv[1] == commands[2] and len(sys.argv) > 9 and help_flag == False):
+    if(sys.argv[1] == commands[2] and help_flag == False):
         current_mode = modes.calculate_all
-    elif(sys.argv[1] == commands[3] and len(sys.argv) > 5 and help_flag == False):
+        if(len(sys.argv) < 9):
+            print("wrong input length ")
+            print(
+                "example:\npython skymap.py calculate-all [latitude] [longitude] [Dec] [Ra] [year] [month] [day] [utc]\n ")
+            sys.exit()
+    elif(sys.argv[1] == commands[3] and help_flag == False):
+        if len(sys.argv) < 5:
+            print("wrong input length ")
+            print(
+                f"\nexample:\npython skymap.py calculate-j2000 [year] [month] [day] [time_utc]\nusage:\npython skymap.py calculate-j2000 2021 9 12 12.50")
+            sys.exit()
         current_mode = modes.calculate_j2000
     elif(sys.argv[1] == commands[4] and len(sys.argv) > 9 and help_flag == False):
         current_mode = modes.calculate_ha
@@ -280,13 +287,17 @@ def caluclating_star_location():
     print_selection()
 
 
+commands = ["-help", "-h", "calculate-all", "calculate-j2000", "calculate-ha"]
+help_flag = False
+
+
 def main():
 
     if len(sys.argv) == 1:
         print("python skymap.py -h\ncopy line above to get -help")
         sys.exit()
     else:
-        if sys.argv.count(commands[1]) != 0:
+        if sys.argv.count(commands[1]) != 0 or sys.argv.count(commands[0]) != 0:
             help_flag = True
 
         else:
