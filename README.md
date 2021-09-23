@@ -1,4 +1,6 @@
 # skymap_python CLI
+command line interface for astronomy use 
+you can perform astronomic calculations using this interface
 
 ### example az and alt of star based on your position
 
