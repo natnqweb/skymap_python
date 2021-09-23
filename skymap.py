@@ -284,9 +284,11 @@ def main():
 
     if len(sys.argv) == 1:
         print("python skymap.py -h\ncopy line above to get -help")
+        sys.exit()
     else:
         if sys.argv.count(commands[1]) != 0:
             help_flag = True
+
         else:
             help_flag = False
             # if sys.argv.count("-h") == 0:
@@ -302,6 +304,10 @@ def main():
     elif help_flag == True and sys.argv.count(commands[3]) != 0:
         print(
             f"\nexample:\npython skymap.py calculate-j2000 [year] [month] [day] [time_utc]\nusage:\npython skymap.py calculate-j2000 2021 9 12 12.50")
+    elif help_flag == True and len(sys.argv) == 2:
+        print(
+            f"command does not exist avaliable commands: {commands}\nsee:\npython skymap.py calculate-j2000 -h\npython skymap.py calculate-all -h")
+
     else:
         caluclating_star_location()
 
