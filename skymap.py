@@ -209,14 +209,14 @@ def caluclating_star_location():
     if(sys.argv[1] == commands[4] and len(sys.argv) > 9 and help_flag == False):
         correct_input_length = True
     if correct_input_length:
-        sys.argv[2] = mylocation.latitude
-        sys.argv[3] = mylocation.longitude
-        sys.argv[4] = tracked_star.declination
-        sys.argv[5] = tracked_star.right_ascension
-        sys.argv[6] = datetime.year
-        sys.argv[7] = datetime.month
-        sys.argv[8] = datetime.day
-        sys.argv[9] = datetime.UTC_TIME
+        mylocation.latitude = float(sys.argv[2])
+        mylocation.longitude = float(sys.argv[3])
+        tracked_star.declination = float(sys.argv[4])
+        tracked_star.right_ascension = float(sys.argv[5])
+        datetime.year = float(sys.argv[6])
+        datetime.month = float(sys.argv[7])
+        datetime.day = float(sys.argv[8])
+        datetime.UTC_TIME = float(sys.argv[9])
         skymap.my_location(mylocation.latitude, mylocation.longitude)
         skymap.DateTime(datetime.year, datetime.month,
                         datetime.day, datetime.UTC_TIME)
@@ -226,7 +226,7 @@ def caluclating_star_location():
         tracked_star.azymuth = skymap.get_azymuth()
         tracked_star.altitude = skymap.get_alt()
         print(
-            f"data provided by you\nyour location:\nlat: {mylocation.latitude} long: {mylocation.longitude}\nday and time: {datetime.year}-{datetime.month}-{datetime.day} time:{datetime.UTC_TIME}\nlooking for:Star RA : {tracked_star.right_ascension},Dec : {tracked_star.declination}\n")
+            f"data provided by you\nyour location:\nlat: {mylocation.latitude} long: {mylocation.longitude}\nday and time: {int(datetime.year)}-{int(datetime.month)}-{datetime.day} time:{int(datetime.UTC_TIME)}\nlooking for:Star RA : {tracked_star.right_ascension},Dec : {tracked_star.declination}\n")
         print("\n---------------------------------------------------------Results---------------------------------------------------------\n")
         if(tracked_star.altitude > 0):
             print("Visibility : STAR IS VISIBLE")
