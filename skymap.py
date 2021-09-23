@@ -1,10 +1,8 @@
 import sys
 import math
 
-commands = ["-help", "-h", "-skymap", "get-ha", "calculate-all", "get-j2000",
-            "-year", "-month", "-day", "-time_utc", "-lat", "-long", "-ra", "-dec"]
+commands = ["-help", "-h", "calculate-all", "calculate-j2000", "calculate-ha"]
 help_flag = False
-print("\n\n\n\n\n\nhelp: \npython skymap.py help not all function work it is alfa version\n\n\n\n\n\n")
 
 
 class SkyMap:
@@ -199,16 +197,60 @@ class input_date_time:
     UTC_TIME = 16
 
 
+class modes:
+    calculate_all = 1
+    calculate_j2000 = 2
+    calculate_ha = 3
+
+
+def checkinput():
+    current_mode = 0
+    if(sys.argv[1] == commands[2] and len(sys.argv) > 9 and help_flag == False):
+        current_mode = modes.calculate_all
+    elif(sys.argv[1] == commands[3] and len(sys.argv) > 9 and help_flag == False):
+        current_mode = modes.calculate_j2000
+    elif(sys.argv[1] == commands[4] and len(sys.argv) > 9 and help_flag == False):
+        current_mode = modes.calculate_ha
+    return current_mode
+
+
 def caluclating_star_location():
+
+    mode = checkinput()
     #global help_flag
     tracked_star = star()
     mylocation = my_location()
     datetime = input_date_time()
     skymap = SkyMap()
-    correct_input_length = False
-    if(sys.argv[1] == commands[4] and len(sys.argv) > 9 and help_flag == False):
-        correct_input_length = True
-    if correct_input_length:
+
+    def print_selection():  # based on mode
+        if mode == modes.calculate_j2000:
+            print("\n---------------------------------------------------------Results---------------------------------------------------------\n")
+            print(
+                f"based on input data {skymap.j2000}-days passed since january 2000 to {int(datetime.year)}-{int(datetime.month)}-{int(datetime.day)}\t{datetime.UTC_TIME}")
+            print("\n---------------------------------------------------------Results---------------------------------------------------------\n")
+
+        elif mode == modes.calculate_all:
+            print(
+                f"data provided by you\nyour location:\nlat: {mylocation.latitude} long: {mylocation.longitude}\nday and time: {int(datetime.year)}-{int(datetime.month)}-{int(datetime.day)} time:{datetime.UTC_TIME}\nlooking for:Star RA : {tracked_star.right_ascension},Dec : {tracked_star.declination}\n")
+            print("\n---------------------------------------------------------Results---------------------------------------------------------\n")
+            if(tracked_star.altitude > 0):
+                print("Visibility : STAR IS VISIBLE")
+            else:
+                print("Visibility : STAR IS not VISIBLE")
+            print(
+                f"your star is located at azymuth:{tracked_star.azymuth} altitude:{tracked_star.altitude}\n")
+            print("\n---------------------------------------------------------Results---------------------------------------------------------\n")
+
+            print("program finished")
+
+        elif mode == modes.calculate_ha:
+            print("\n---------------------------------------------------------Results---------------------------------------------------------\n")
+            print(
+                f"based on input data hour angle is  equal to {skymap.ha}[degrees]")
+            print("\n---------------------------------------------------------Results---------------------------------------------------------\n")
+
+    if mode != 0:
         mylocation.latitude = float(sys.argv[2])
         mylocation.longitude = float(sys.argv[3])
         tracked_star.declination = float(sys.argv[4])
@@ -225,19 +267,7 @@ def caluclating_star_location():
         skymap.Calculate_all()
         tracked_star.azymuth = skymap.get_azymuth()
         tracked_star.altitude = skymap.get_alt()
-        print(
-            f"data provided by you\nyour location:\nlat: {mylocation.latitude} long: {mylocation.longitude}\nday and time: {int(datetime.year)}-{int(datetime.month)}-{datetime.day} time:{int(datetime.UTC_TIME)}\nlooking for:Star RA : {tracked_star.right_ascension},Dec : {tracked_star.declination}\n")
-        print("\n---------------------------------------------------------Results---------------------------------------------------------\n")
-        if(tracked_star.altitude > 0):
-            print("Visibility : STAR IS VISIBLE")
-        else:
-            print("Visibility : STAR IS not VISIBLE")
-        print(
-            f"your star is located at azymuth:{tracked_star.azymuth} altitude:{tracked_star.altitude}\n")
-        print("\n---------------------------------------------------------Results---------------------------------------------------------\n")
-
-        print("program finished")
-
+        print_selection()
         sys.exit()
 
 
@@ -254,7 +284,7 @@ def main():
                 # if sys.argv.count("-h") == 0:
 
     if help_flag == True and len(sys.argv) == 3:
-        if sys.argv[1] == commands[4] or sys.argv[2] == commands[4]:
+        if sys.argv[1] == f[4] or sys.argv[2] == commands[2]:
             print(
                 "example:\npython skymap.py calculate-all [latitude] [longitude] [Dec] [Ra] [year] [month] [day] [utc]\n ")
             print(
