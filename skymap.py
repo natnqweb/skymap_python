@@ -207,7 +207,7 @@ def checkinput():
     current_mode = 0
     if(sys.argv[1] == commands[2] and len(sys.argv) > 9 and help_flag == False):
         current_mode = modes.calculate_all
-    elif(sys.argv[1] == commands[3] and len(sys.argv) > 9 and help_flag == False):
+    elif(sys.argv[1] == commands[3] and len(sys.argv) > 5 and help_flag == False):
         current_mode = modes.calculate_j2000
     elif(sys.argv[1] == commands[4] and len(sys.argv) > 9 and help_flag == False):
         current_mode = modes.calculate_ha
@@ -217,7 +217,7 @@ def checkinput():
 def caluclating_star_location():
 
     mode = checkinput()
-    #global help_flag
+    # global help_flag
     tracked_star = star()
     mylocation = my_location()
     datetime = input_date_time()
@@ -227,7 +227,7 @@ def caluclating_star_location():
         if mode == modes.calculate_j2000:
             print("\n---------------------------------------------------------Results---------------------------------------------------------\n")
             print(
-                f"based on input data {skymap.j2000}-days passed since january 2000 to {int(datetime.year)}-{int(datetime.month)}-{int(datetime.day)}\t{datetime.UTC_TIME}")
+                f"based on input data {calculated_j2000}-days passed since january 2000 to {int(datetime.year)}-{int(datetime.month)}-{int(datetime.day)}\t{datetime.UTC_TIME}")
             print("\n---------------------------------------------------------Results---------------------------------------------------------\n")
 
         elif mode == modes.calculate_all:
@@ -249,8 +249,10 @@ def caluclating_star_location():
             print(
                 f"based on input data hour angle is  equal to {skymap.ha}[degrees]")
             print("\n---------------------------------------------------------Results---------------------------------------------------------\n")
-
-    if mode != 0:
+        else:
+            print(f"command does not exist avaliable commands: {commands}")
+        sys.exit()
+    if mode == modes.calculate_all:
         mylocation.latitude = float(sys.argv[2])
         mylocation.longitude = float(sys.argv[3])
         tracked_star.declination = float(sys.argv[4])
@@ -267,8 +269,15 @@ def caluclating_star_location():
         skymap.Calculate_all()
         tracked_star.azymuth = skymap.get_azymuth()
         tracked_star.altitude = skymap.get_alt()
-        print_selection()
-        sys.exit()
+    if mode == modes.calculate_j2000:
+        datetime.year = float(sys.argv[2])
+        datetime.month = float(sys.argv[3])
+        datetime.day = float(sys.argv[4])
+        datetime.UTC_TIME = float(sys.argv[5])
+        calculated_j2000 = skymap.J2000(
+            datetime.year, datetime.month, datetime.day, datetime.UTC_TIME)
+
+    print_selection()
 
 
 def main():
@@ -276,27 +285,25 @@ def main():
     if len(sys.argv) == 1:
         print("python skymap.py -h\ncopy line above to get -help")
     else:
-        for args in sys.argv:
-            if args == commands[1]:
-                help_flag = True
-            else:
-                help_flag = False
-                # if sys.argv.count("-h") == 0:
-
-    if help_flag == True and len(sys.argv) == 3:
-        if sys.argv[1] == f[4] or sys.argv[2] == commands[2]:
-            print(
-                "example:\npython skymap.py calculate-all [latitude] [longitude] [Dec] [Ra] [year] [month] [day] [utc]\n ")
-            print(
-                "example below show how to calculate position of star on sky in example below we observe sirius at los angeles on 4th of september 2021 time :20UTC\nif you dont know star RA and dec search for right ascension and declination of star you are looking for on internet :)")
-            print(
-                "\nlos angeles and sirius example:\npython skymap.py calculate-all 34.052235 -118.243683 -16.7424 101.52 2021 9 4 20\n")
+        if sys.argv.count(commands[1]) != 0:
+            help_flag = True
         else:
-            print(f"command is not valid\nall commands:{commands}")
+            help_flag = False
+            # if sys.argv.count("-h") == 0:
+
+    if help_flag == True and sys.argv.count(commands[2]) != 0:
+
+        print(
+            "example:\npython skymap.py calculate-all [latitude] [longitude] [Dec] [Ra] [year] [month] [day] [utc]\n ")
+        print(
+            "example below show how to calculate position of star on sky in example below we observe sirius at los angeles on 4th of september 2021 time :20UTC\nif you dont know star RA and dec search for right ascension and declination of star you are looking for on internet :)")
+        print(
+            "\nlos angeles and sirius example:\npython skymap.py calculate-all 34.052235 -118.243683 -16.7424 101.52 2021 9 4 20\n")
+    elif help_flag == True and sys.argv.count(commands[3]) != 0:
+        print(
+            f"\nexample:\npython skymap.py calculate-j2000 [year] [month] [day] [time_utc]\nusage:\npython skymap.py calculate-j2000 2021 9 12 12.50")
     else:
         caluclating_star_location()
-        print(
-            "you are not using help properly\nexample:\npython skymap.py calculate-all -h\n\nor\n\npython skymap.py -h calculate-all\n\n")
 
 
 main()
