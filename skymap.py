@@ -317,7 +317,7 @@ def main():
             f"\nexample:\npython skymap.py calculate-j2000 [year] [month] [day] [time_utc]\nusage:\npython skymap.py calculate-j2000 2021 9 12 12.50")
     elif help_flag == True and len(sys.argv) == 2:
         print(
-            f"command does not exist avaliable commands: {commands}\nsee:\npython skymap.py calculate-j2000 -h\npython skymap.py calculate-all -h")
+            f"avaliable commands: {commands}\nsee:\npython skymap.py calculate-j2000 -h\npython skymap.py calculate-all -h")
 
     else:
         caluclating_star_location()
