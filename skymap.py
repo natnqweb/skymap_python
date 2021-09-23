@@ -239,9 +239,6 @@ def caluclating_star_location():
         print("program finished")
 
         sys.exit()
-    else:
-        print("number of input arguments is incorrect")
-        sys.exit()
 
 
 def main():
@@ -249,32 +246,27 @@ def main():
     if len(sys.argv) == 1:
         print("python skymap.py -h\ncopy line above to get -help")
     else:
+        for args in sys.argv:
+            if args == commands[1]:
+                help_flag = True
+            else:
+                help_flag = False
+                # if sys.argv.count("-h") == 0:
 
-        for command in commands:
-
-            if sys.argv[1] == command:
-
-                for args in sys.argv:
-                    if args == commands[1]:
-                        help_flag = True
-                    else:
-                        help_flag = False
-                        if sys.argv.count("-h") == 0:
-                            caluclating_star_location()
-
-                if help_flag == True and len(sys.argv) == 3:
-                    if sys.argv[1] == commands[4] or sys.argv[2] == commands[4]:
-                        print(
-                            "example:\npython skymap.py calculate-all [latitude] [longitude] [Dec] [Ra] [year] [month] [day] [utc]\n ")
-                        print(
-                            "example below show how to calculate position of star on sky in example below we observe sirius at los angeles on 4th of september 2021 time :20UTC\nif you dont know star RA and dec search for right ascension and declination of star you are looking for on internet :)")
-                        print(
-                            "\nlos angeles and sirius example:\npython skymap.py calculate-all 34.052235 -118.243683 -16.7424 101.52 2021 9 4 20\n")
-                    else:
-                        print(f"command is not valid\nall commands:{commands}")
-                else:
-                    print(
-                        "you are not using help properly\nexample:\npython skymap.py calculate-all -h\n\nor\n\npython skymap.py -h calculate-all\n\n")
+    if help_flag == True and len(sys.argv) == 3:
+        if sys.argv[1] == commands[4] or sys.argv[2] == commands[4]:
+            print(
+                "example:\npython skymap.py calculate-all [latitude] [longitude] [Dec] [Ra] [year] [month] [day] [utc]\n ")
+            print(
+                "example below show how to calculate position of star on sky in example below we observe sirius at los angeles on 4th of september 2021 time :20UTC\nif you dont know star RA and dec search for right ascension and declination of star you are looking for on internet :)")
+            print(
+                "\nlos angeles and sirius example:\npython skymap.py calculate-all 34.052235 -118.243683 -16.7424 101.52 2021 9 4 20\n")
+        else:
+            print(f"command is not valid\nall commands:{commands}")
+    else:
+        caluclating_star_location()
+        print(
+            "you are not using help properly\nexample:\npython skymap.py calculate-all -h\n\nor\n\npython skymap.py -h calculate-all\n\n")
 
 
 main()
