@@ -2,6 +2,9 @@ import sys
 import math
 
 
+import pandas
+
+
 class SkyMap:
     hour = 0
 
@@ -198,6 +201,8 @@ class modes:
     calculate_all = 1
     calculate_j2000 = 2
     calculate_ha = 3
+    search = 4
+    find_specific_star = 5
 
 
 def checkinput():
@@ -218,6 +223,16 @@ def checkinput():
         current_mode = modes.calculate_j2000
     elif(sys.argv[1] == commands[4] and len(sys.argv) > 9 and help_flag == False):
         current_mode = modes.calculate_ha
+    elif(sys.argv[1] == commands[5] or sys.argv[1] == commands[6]):
+        current_mode = modes.search
+        if(len(sys.argv) == 2):
+            print("specify your search! ")
+            print(
+                "\nexample syntax:\npython skymap.py search [Nameofstar]\nor\npython skymap.py -search [Nameofstar] \nexample usage:\npython skymap.py search Sirius")
+            sys.exit()
+    elif ((sys.argv.count(commands[7]) or sys.argv.count(commands[8])) and help_flag == False):
+        current_mode = modes.find_specific_star
+
     return current_mode
 
 
@@ -256,8 +271,63 @@ def caluclating_star_location():
             print(
                 f"based on input data hour angle is  equal to {skymap.ha}[degrees]")
             print("\n---------------------------------------------------------Results---------------------------------------------------------\n")
+        elif mode == modes.search and stardatabase.correct_database == True:
+            database = stardatabase()
+            database.search(sys.argv[2])
+            input_data_length = len(sys.argv)
+            if input_data_length > 3 and sys.argv[3] == "-deg":
+                ra_degrees = database.searchedstar[0]*15
+                print(f"Ra converted to degrees {ra_degrees}")
+        elif mode == modes.find_specific_star and stardatabase.correct_database:
+            database = stardatabase()
+            database.search(sys.argv[2])
+            tracked_star.right_ascension = database.searchedstar[0]
+            tracked_star.declination = database.searchedstar[1]
+            for x in range(len(sys.argv)):
+                if sys.argv[x] == "lat" or sys.argv[x] == "-lat":
+                    try:
+                        mylocation.latitude = float(sys.argv[x+1])
+                    except:
+                        print(
+                            "no argument or wrong number of arguments passed see : -help")
+                        sys.exit()
+                if sys.argv[x] == "long" or sys.argv[x] == "-long":
+                    try:
+                        mylocation.longitude = float(sys.argv[x+1])
+                    except:
+                        print(
+                            "no argument or wrong number of arguments passed see : -help")
+                        sys.exit()
+                if sys.argv[x] == "datetime" or sys.argv[x] == "-datetime":
+                    try:
+                        datetime.year = float(sys.argv[x+1])
+                        datetime.month = float(sys.argv[x+2])
+                        datetime.day = float(sys.argv[x+3])
+                        datetime.UTC_TIME = float(sys.argv[x+4])
+                    except:
+                        print(
+                            "no argument or wrong number of arguments passed see : -help")
+                        sys.exit()
+            skymap.my_location(mylocation.latitude,
+                               mylocation.longitude)
+            skymap.DateTime(datetime.year, datetime.month,
+                            datetime.day, datetime.UTC_TIME)
+            skymap.star_ra_dec(
+                tracked_star.right_ascension, tracked_star.declination)
+            skymap.Calculate_all()
+            tracked_star.azymuth = skymap.get_azymuth()
+            tracked_star.altitude = skymap.get_alt()
+            print(
+                "----------------------------------------results--------------------------------")
+            print(f"star name:{sys.argv[2]}\n{sys.argv[2]}:Ra={tracked_star.right_ascension} Dec={tracked_star.declination}\nyour location:{mylocation.latitude},{mylocation.longitude}\ndate : {int(datetime.year)}-{int(datetime.month)}-{int(datetime.day)}\ntime utc : {datetime.UTC_TIME}\nstar location at sky Azymuth:{tracked_star.azymuth} altitude:{tracked_star.altitude}")
+            print(
+                "----------------------------------------results--------------------------------")
+
         else:
             print(f"command does not exist avaliable commands: {commands}")
+            if(stardatabase.correct_database == False):
+                print(
+                    "something is wrong with database , check if its named right hygfull.csv or is it in same folder as this file")
         sys.exit()
     if mode == modes.calculate_all:
         mylocation.latitude = float(sys.argv[2])
@@ -287,7 +357,38 @@ def caluclating_star_location():
     print_selection()
 
 
-commands = ["-help", "-h", "calculate-all", "calculate-j2000", "calculate-ha"]
+class stardatabase:
+
+    try:
+        correct_database = True
+        stars = pandas.read_csv('hygfull.csv', index_col="StarID")
+
+        searchedstar = 0, 0
+        names = stars['ProperName']
+        ra = stars['RA']
+        dec = stars['Dec']
+
+        def search(self, star_name):
+            Star_found = False
+            iterator = 0
+            for name in self.names:
+                iterator += 1
+                if name == star_name:
+                    print(
+                        f"star name: {name} RA:{self.ra[iterator]} DEC: {self.dec[iterator]}")
+                    Star_found = True
+                    self.searchedstar = self.ra[iterator], self.dec[iterator]
+
+            if Star_found == False:
+                print(f"{star_name} not found in database")
+
+    except:
+        database_error = True
+        correct_database = False
+
+
+commands = ["-help", "-h", "calculate-all",
+            "calculate-j2000", "calculate-ha", "-search", "search", "-find", "find"]
 help_flag = False
 
 
@@ -317,7 +418,10 @@ def main():
             f"\nexample:\npython skymap.py calculate-j2000 [year] [month] [day] [time_utc]\nusage:\npython skymap.py calculate-j2000 2021 9 12 12.50")
     elif help_flag == True and len(sys.argv) == 2:
         print(
-            f"avaliable commands: {commands}\nsee:\npython skymap.py calculate-j2000 -h\npython skymap.py calculate-all -h")
+            f"avaliable commands: {commands}\nsee:\npython skymap.py calculate-j2000 -h\npython skymap.py calculate-all -h\npython skymap.py search -h")
+    elif (help_flag and (sys.argv.count(commands[5]) or sys.argv.count(commands[6]))):
+        print(
+            "\nexample syntax:\npython skymap.py search [Nameofstar]\nor\npython skymap.py -search [Nameofstar] \nexample usage:\npython skymap.py search Sirius")
 
     else:
         caluclating_star_location()
