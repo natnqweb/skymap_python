@@ -15,4 +15,9 @@ you can perform astronomic calculations using this interface
     python skymap.py calculate-j2000 2021 9 12 12.50
 
 ### find star using database
-    example syntax:                                                                                                                                                                  python skymap.py search [Nameofstar]                                                                                                                                               or                                                                                                                                                                                 python skymap.py -search [Nameofstar]                                                                                                                                                example usage:                                                                                                                                                                     python skymap.py search Sirius   
+    example syntax:
+    python skymap.py search [Nameofstar] 
+    or 
+    python skymap.py -search [Nameofstar]
+    example usage:
+    python skymap.py search Sirius   
