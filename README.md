@@ -1,4 +1,4 @@
-# skymap_python CLI
+# SkyMap CLI
 command line interface for astronomy use 
 you can perform astronomic calculations using this interface
 
